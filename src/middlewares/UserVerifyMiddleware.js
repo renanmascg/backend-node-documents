@@ -1,14 +1,20 @@
-const userIdVerify = (req,res,next) => {
+const User = require('../models/User');
+
+const userIdVerify = async (req,res,next) => {
 
   const { userid: userId } = req.headers;
 
-  if(!userId) {
-    return res.status(403).json({
-      message: "User not allowed"
-    });
-  }
+  try {
+    const user = await User.findById(userId);
 
-  next();
+    req.user = user;
+
+    next();
+
+  } catch (err) {
+
+    return res.boom.unauthorized('User not Allowed');
+  }
 
 }
 
