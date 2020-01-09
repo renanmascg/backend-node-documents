@@ -13,8 +13,10 @@ const routes = express.Router();
 
 routes.post('/sessions/signup', SessionController.store);
 routes.post('/sessions/login', SessionController.show);
+routes.post('/sessions/signin', SessionController.show);
 
 routes.use(UserVerifyMiddleware.userIdVerify);
+//routes.use(UserVerifyMiddleware.isProtected);
 
 routes.post('/documents', DocumentController.store);
 routes.get('/documents', DocumentController.show);

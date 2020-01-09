@@ -1,3 +1,7 @@
+const jwt = require('jsonwebtoken');
+
+const configKeys = require('../../config_keys');
+
 // index, show, store, update, destroy
 const User = require('../models/User');
 
@@ -39,17 +43,22 @@ const show = async (req, res) => {
   let user = await User.findOne({ email });
 
   if(!user) {
-    return res.status(401).json({ message: "Usuário não cadastrado!" });
+    return res.unauthorized("User no found");
   }
 
-  if (user.password != password) {
-    return res.status(401).json({ message: "Senha incorreta!"});
-  }
+  user.comparePassword(password, (err, isMatch) => {
+    if(isMatch) {
+      const exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7)
+      const token = jwt.sign({ id: user._id, exp }, configKeys.tokenKey)
+      return res.json({
+        id: user.id,
+        email,
+        token
+      })
+    }
+    return res.boom.unauthorized();
+  })
 
-  return res.status(200).json({ 
-    id: user.id,
-    email
-  });
 }
 
 module.exports = {
