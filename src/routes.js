@@ -20,5 +20,6 @@ routes.post('/documents', DocumentController.store);
 routes.get('/documents', DocumentController.show);
 
 routes.post('/docUpload',MultiFormMiddleware.upload.single('docFile'), DocumentUploadController.store);
+routes.post('/docDownload', DocumentUploadController.show);
 
 module.exports = routes;

@@ -12,10 +12,11 @@ AWS.config.update({
 const s3 = new AWS.S3();
 
 const store = async (req, res) => {
-  const { file, body : { docName } } = req;
-  const { userid } = req.headers;
+  const { file, user, body : { docName } } = req;
 
-  const awsDocName = `${userid}/${docName}`;
+  console.log(user);
+
+  const awsDocName = `${user._id}/${docName}`;
 
   try {
     
@@ -47,6 +48,29 @@ const store = async (req, res) => {
   }
 }
 
+const show = async (req, res) => {
+
+  const { user ,body: {docType} } = req;
+
+  console.log(`compressed/${user._id}/${docType}.jpgx`);
+
+  try {
+
+    const file = await s3.getObject({
+      Bucket: configKeys.BUCKET,
+      Key: `compressed/${user._id}/${docType}.jpg`,
+    }).promise();
+    
+    return res.json({imageFile: file});
+    
+
+  } catch(err) {
+    return res.boom.badRequest('Document not found');
+  }
+  
+}
+
 module.exports = {
-  store
+  store,
+  show
 }

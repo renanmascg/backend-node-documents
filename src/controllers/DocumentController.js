@@ -1,11 +1,11 @@
 const Document = require('../models/Document');
 
 const store = async (req,res) => {
-  const { userid: userId } = req.headers;
+  const { user } = req;
 
   try {
 
-    let documents = await Document.findOne({ user: userId});
+    let documents = await Document.findOne({ user: user._id});
 
     if (!documents) {
       documents = await Document.create({
